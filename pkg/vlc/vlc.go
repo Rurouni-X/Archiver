@@ -1,7 +1,6 @@
 package vlc
 
 import (
-	"Archiver/utils"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -13,9 +12,17 @@ func Encode(str string) string {
 
 	str = prepareText(str)
 	binStr := encodeBin(str)
-	chunks := splitByChunks(binStr, utils.ChunkSize)
+	chunks := splitByChunks(binStr, ChunkSize)
 
 	return chunks.ToHex().Tostring()
+}
+
+func Decode(encodedtext string) string {
+
+	result := NewhexChunks(encodedtext).ToBinary().Join()
+	dTree := getEncodingTable().DecodingTree()
+
+	return exportText(dTree.Decode(result))
 }
 
 func prepareText(str string) string {
@@ -34,6 +41,29 @@ func prepareText(str string) string {
 	return buff.String()
 }
 
+func exportText(str string) string {
+
+	var buff strings.Builder
+	var isCapital bool
+
+	for _, ch := range str {
+
+		if isCapital {
+			buff.WriteRune(unicode.ToUpper(ch))
+			isCapital = false
+			continue
+		}
+
+		if ch == '!' {
+			isCapital = true
+			continue
+		} else {
+			buff.WriteRune(ch)
+		}
+	}
+
+	return buff.String()
+}
 
 
 func encodeBin(str string) string {
@@ -56,9 +86,9 @@ func bin(ch rune) string {
 
 	return res
 }
-func getEncodingTable() utils.EncodingTable {
+func getEncodingTable() EncodingTable {
 
-	return utils.EncodingTable{
+	return EncodingTable{
 		' ': "11",
 		't': "1001",
 		'n': "10000",
@@ -92,7 +122,7 @@ func getEncodingTable() utils.EncodingTable {
 
 
 
-func splitByChunks(binStr string, chunkSize int) utils.BinaryChunks {
+func splitByChunks(binStr string, chunkSize int) BinaryChunks {
 
 	strLen := utf8.RuneCountInString(binStr)
 	chunksCount := strLen / chunkSize
@@ -101,7 +131,7 @@ func splitByChunks(binStr string, chunkSize int) utils.BinaryChunks {
 		chunksCount++
 	}
 
-	res := make(utils.BinaryChunks, 0, chunksCount)
+	res := make(BinaryChunks, 0, chunksCount)
 	var buff strings.Builder
 
 	for idx, ch := range binStr {
@@ -109,7 +139,7 @@ func splitByChunks(binStr string, chunkSize int) utils.BinaryChunks {
 		buff.WriteString(string(ch))
 
 		if (idx+1) % chunkSize == 0 {
-			res = append(res, utils.BinaryChunk(buff.String()))
+			res = append(res, BinaryChunk(buff.String()))
 			buff.Reset()
 		}
 	}
@@ -118,7 +148,7 @@ func splitByChunks(binStr string, chunkSize int) utils.BinaryChunks {
 		lastChunk := buff.String()
 		lastChunk += strings.Repeat("0", chunkSize - len(lastChunk))
 
-		res = append(res, utils.BinaryChunk(lastChunk))
+		res = append(res, BinaryChunk(lastChunk))
 	}
 
 	return res
