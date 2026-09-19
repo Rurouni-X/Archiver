@@ -1,6 +1,7 @@
 package vlc
 
 import (
+	"Archiver/utils"
 	"reflect"
 	"testing"
 )
@@ -57,7 +58,7 @@ func Test_splitByChunks(t *testing.T) {
 	tests := []struct {
 		name 	string
 		args 	args
-		want    BinaryChunks
+		want    utils.BinaryChunks
 	}{
 		{
 			name: "base name",
@@ -65,7 +66,7 @@ func Test_splitByChunks(t *testing.T) {
 				binStr: "001000100110100101",
 				chunkSize: 8,
 			},
-			want: BinaryChunks{"00100010", "01101001", "01000000"},
+			want: utils.BinaryChunks{"00100010", "01101001", "01000000"},
 		},
 	}
 	for _, tt := range tests {
@@ -82,13 +83,13 @@ func Test_splitByChunks(t *testing.T) {
 func TestBinaryChunks_ToHex(t *testing.T) {
 	tests := []struct {
 		name 	string
-		bc 		BinaryChunks
-		want    HexChunks
+		bc 		utils.BinaryChunks
+		want    utils.HexChunks
 	}{
 		{
 			name: "base name",
-			bc: BinaryChunks{"0101111", "10000000"},
-			want: HexChunks{"2F", "80"},
+			bc: utils.BinaryChunks{"0101111", "10000000"},
+			want: utils.HexChunks{"2F", "80"},
 		},
 	}
 	for _, tt := range tests {

@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"Archiver/pkg/vlc"
-	"errors"
+	"Archiver/utils"
 	"io"
 	"os"
 	"path/filepath"
@@ -11,10 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const PackedExtension = "vlc"
-var ErrEmptyPath = errors.New("path to file is not specified")
-
-var vlcCmd = &cobra.Command{
+var vlcPackCmd = &cobra.Command{
 	Use: "vlc",
 	Short: "Pack file using variable-length code",
 	Run: pack,
@@ -23,7 +20,7 @@ var vlcCmd = &cobra.Command{
 func pack(_ *cobra.Command, args []string) {
 
 	if len(args) == 0 || args[0] == "" {
-		HandleError(ErrEmptyPath)
+		HandleError(utils.ErrEmptyPath)
 	}
 
 	filePath := args[0] // путь до файла
@@ -53,9 +50,9 @@ func packFileName(path string) string {
 	ext := filepath.Ext(fileName)
 	baseName := strings.TrimSuffix(fileName, ext)
 
-	return baseName + "." + PackedExtension
+	return baseName + "." + utils.PackedExtension
 }
 
 func init() {
-	packCmd.AddCommand(vlcCmd)
+	packCmd.AddCommand(vlcPackCmd)
 }
