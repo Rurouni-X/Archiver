@@ -8,18 +8,18 @@ import (
 
 
 
-func Encode(str string) string {
+func Encode(str string) []byte {
 
 	str = prepareText(str)
 	binStr := encodeBin(str)
 	chunks := splitByChunks(binStr, ChunkSize)
 
-	return chunks.ToHex().Tostring()
+	return chunks.Bytes()
 }
 
-func Decode(encodedtext string) string {
+func Decode(encodedData []byte) string {
 
-	result := NewhexChunks(encodedtext).ToBinary().Join()
+	result := NewBinChunks(encodedData).Join()
 	dTree := getEncodingTable().DecodingTree()
 
 	return exportText(dTree.Decode(result))

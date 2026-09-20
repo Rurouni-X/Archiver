@@ -6,74 +6,6 @@ import (
 	"testing"
 )
 
-func TestNewhexChunks(t *testing.T) {
-	tests := []struct {
-		name string
-		str  string
-		want vlc.HexChunks
-	}{
-		{
-			name: "base name",
-			str: "20 30 3C 18",
-			want: vlc.HexChunks{"20", "30", "3C", "18"},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := vlc.NewhexChunks(tt.str)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewhexChunks() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestHexChunk_ToBinary(t *testing.T) {
-	tests := []struct {
-		name string
-		text vlc.HexChunk
-		want vlc.BinaryChunk
-	}{
-		{
-			name: "base name",
-			text: vlc.HexChunk("2F"),
-			want: vlc.BinaryChunk("00101111"),
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			hc := tt.text
-			got := hc.ToBinary()
-			if got != tt.want {
-				t.Errorf("ToBinary() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestHexChunks_ToBinary(t *testing.T) {
-	tests := []struct {
-		name string
-		str  vlc.HexChunks
-		want vlc.BinaryChunks
-	}{
-		{
-			name: "base name",
-			str: vlc.HexChunks{"2F", "80"},
-			want: vlc.BinaryChunks{"00101111", "10000000"},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			hc := tt.str
-			got := hc.ToBinary()
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ToBinary() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestBinaryChunks_Join(t *testing.T) {
 	tests := []struct {
 		name string
@@ -92,6 +24,28 @@ func TestBinaryChunks_Join(t *testing.T) {
 			got := bc.Join()
 			if got != tt.want {
 				t.Errorf("Join() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestNewBinChunks(t *testing.T) {
+	tests := []struct {
+		name string
+		data []byte
+		want vlc.BinaryChunks
+	}{
+		{
+			name: "test binaryChunks",
+			data: []byte{20, 30, 60, 18},
+			want: vlc.BinaryChunks{"00010100", "00011110", "00111100", "00010010"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := vlc.NewBinChunks(tt.data)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewBinChunks() = %v, want %v", got, tt.want)
 			}
 		})
 	}
