@@ -6,7 +6,14 @@ import (
 	"unicode/utf8"
 )
 
-func Encode(str string) []byte {
+type EncoderDecoder struct {
+}
+
+func New() EncoderDecoder {
+	return EncoderDecoder{}
+}
+
+func (_ EncoderDecoder) Encode(str string) []byte {
 
 	str = prepareText(str)
 	binStr := encodeBin(str)
@@ -15,7 +22,7 @@ func Encode(str string) []byte {
 	return chunks.Bytes()
 }
 
-func Decode(encodedData []byte) string {
+func (_ EncoderDecoder) Decode(encodedData []byte) string {
 
 	result := NewBinChunks(encodedData).Join()
 	dTree := getEncodingTable().DecodingTree()

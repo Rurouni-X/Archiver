@@ -93,7 +93,9 @@ func TestEncode(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := Encode(tt.str)
+
+			encoder := New()
+			got := encoder.Encode(tt.str)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Encode() = %v, want %v", got, tt.want)
 			}
@@ -116,7 +118,8 @@ func TestDecode(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			got := Decode([]byte(tt.encodedtext))
+			decoder := New()
+			got := decoder.Decode([]byte(tt.encodedtext))
 
 			if got != tt.want {
 				t.Errorf("Decode() = %v, want %v", got, tt.want)

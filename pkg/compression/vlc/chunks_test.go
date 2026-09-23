@@ -1,7 +1,7 @@
 package vlc_test
 
 import (
-	"Archiver/pkg/vlc"
+	"Archiver/pkg/compression/vlc"
 	"reflect"
 	"testing"
 )
