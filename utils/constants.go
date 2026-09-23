@@ -4,5 +4,5 @@ import "errors"
 
 const PackedExtension = "vlc"
 const UnpackedExtension = "txt"
-var ErrEmptyPath = errors.New("path to file is not specified")
 
+var ErrEmptyPath = errors.New("path to file is not specified")

@@ -9,12 +9,12 @@ import (
 func TestBinaryChunks_Join(t *testing.T) {
 	tests := []struct {
 		name string
-		str vlc.BinaryChunks
+		str  vlc.BinaryChunks
 		want string
 	}{
 		{
 			name: "base name",
-			str: vlc.BinaryChunks{"00101111", "10000000"},
+			str:  vlc.BinaryChunks{"00101111", "10000000"},
 			want: "0010111110000000",
 		},
 	}

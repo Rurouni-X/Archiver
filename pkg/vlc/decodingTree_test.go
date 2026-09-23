@@ -8,14 +8,14 @@ import (
 
 func TestEncodingTable_DecodingTree(t *testing.T) {
 	tests := []struct {
-		name string 
-		et vlc.EncodingTable
+		name string
+		et   vlc.EncodingTable
 		want vlc.DecodingTree
 	}{
 		{
 			name: "base name",
 
-			et: vlc.EncodingTable{'a':"11", 'b':"1001", 'z':"0101"},
+			et: vlc.EncodingTable{'a': "11", 'b': "1001", 'z': "0101"},
 
 			want: vlc.DecodingTree{
 

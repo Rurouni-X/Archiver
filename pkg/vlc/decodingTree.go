@@ -4,8 +4,8 @@ import "strings"
 
 type DecodingTree struct {
 	Value string
-	Zero *DecodingTree
-	One *DecodingTree
+	Zero  *DecodingTree
+	One   *DecodingTree
 }
 
 func (et EncodingTable) DecodingTree() DecodingTree {
@@ -23,18 +23,18 @@ func (dt *DecodingTree) Add(code string, value rune) {
 	currNode := dt
 
 	for _, ch := range code {
-		
+
 		switch ch {
-			case '0':
-				if currNode.Zero == nil {
-					currNode.Zero = &DecodingTree{}
-				}
-				currNode = currNode.Zero
-			case '1':
-				if currNode.One == nil {
-					currNode.One = &DecodingTree{}
-				}
-				currNode = currNode.One
+		case '0':
+			if currNode.Zero == nil {
+				currNode.Zero = &DecodingTree{}
+			}
+			currNode = currNode.Zero
+		case '1':
+			if currNode.One == nil {
+				currNode.One = &DecodingTree{}
+			}
+			currNode = currNode.One
 		}
 	}
 	currNode.Value = string(value)
@@ -46,17 +46,17 @@ func (dt *DecodingTree) Decode(str string) string {
 	currNode := dt
 
 	for _, ch := range str {
-		
+
 		if currNode.Value != "" {
 			buff.WriteString(currNode.Value)
 			currNode = dt
 		}
 
 		switch ch {
-			case '0':
-				currNode = currNode.Zero
-			case '1':
-				currNode = currNode.One
+		case '0':
+			currNode = currNode.Zero
+		case '1':
+			currNode = currNode.One
 		}
 
 		if currNode.Value != "" {

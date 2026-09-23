@@ -4,17 +4,17 @@ import (
 	"Archiver/pkg/vlc"
 	"Archiver/utils"
 	"io"
+	"os"
 	"path/filepath"
 	"strings"
-	"os"
 
 	"github.com/spf13/cobra"
 )
 
 var vlcUnpackCmd = &cobra.Command{
-	Use: "vlc",
+	Use:   "vlc",
 	Short: "Unpack file using variable-length code",
-	Run: unpack,
+	Run:   unpack,
 }
 
 func unpack(_ *cobra.Command, args []string) {

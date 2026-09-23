@@ -12,9 +12,9 @@ import (
 )
 
 var vlcPackCmd = &cobra.Command{
-	Use: "vlc",
+	Use:   "vlc",
 	Short: "Pack file using variable-length code",
-	Run: pack,
+	Run:   pack,
 }
 
 func pack(_ *cobra.Command, args []string) {

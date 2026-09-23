@@ -6,8 +6,6 @@ import (
 	"unicode/utf8"
 )
 
-
-
 func Encode(str string) []byte {
 
 	str = prepareText(str)
@@ -26,11 +24,11 @@ func Decode(encodedData []byte) string {
 }
 
 func prepareText(str string) string {
-	
+
 	var buff strings.Builder
 
 	for _, ch := range str {
-		
+
 		if unicode.IsUpper(ch) {
 			buff.WriteRune('!')
 			buff.WriteRune(unicode.ToLower(ch))
@@ -64,7 +62,6 @@ func exportText(str string) string {
 
 	return buff.String()
 }
-
 
 func encodeBin(str string) string {
 
@@ -120,14 +117,12 @@ func getEncodingTable() EncodingTable {
 	}
 }
 
-
-
 func splitByChunks(binStr string, chunkSize int) BinaryChunks {
 
 	strLen := utf8.RuneCountInString(binStr)
 	chunksCount := strLen / chunkSize
 
-	if strLen / chunkSize != 0 {
+	if strLen/chunkSize != 0 {
 		chunksCount++
 	}
 
@@ -138,7 +133,7 @@ func splitByChunks(binStr string, chunkSize int) BinaryChunks {
 
 		buff.WriteString(string(ch))
 
-		if (idx+1) % chunkSize == 0 {
+		if (idx+1)%chunkSize == 0 {
 			res = append(res, BinaryChunk(buff.String()))
 			buff.Reset()
 		}
@@ -146,7 +141,7 @@ func splitByChunks(binStr string, chunkSize int) BinaryChunks {
 
 	if buff.Len() != 0 {
 		lastChunk := buff.String()
-		lastChunk += strings.Repeat("0", chunkSize - len(lastChunk))
+		lastChunk += strings.Repeat("0", chunkSize-len(lastChunk))
 
 		res = append(res, BinaryChunk(lastChunk))
 	}
