@@ -8,7 +8,6 @@ import (
 
 const ChunkSize = 8
 
-type EncodingTable map[rune]string
 type BinaryChunk string
 type BinaryChunks []BinaryChunk
 

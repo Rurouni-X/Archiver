@@ -1,6 +1,7 @@
 package vlc
 
 import (
+	"Archiver/pkg/compression/vlc/table"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -25,7 +26,7 @@ func (_ EncoderDecoder) Encode(str string) []byte {
 func (_ EncoderDecoder) Decode(encodedData []byte) string {
 
 	result := NewBinChunks(encodedData).Join()
-	dTree := getEncodingTable().DecodingTree()
+	dTree := getEncodingTable().decodingTree()
 
 	return exportText(dTree.Decode(result))
 }
@@ -90,9 +91,9 @@ func bin(ch rune) string {
 
 	return res
 }
-func getEncodingTable() EncodingTable {
+func getEncodingTable() table.EncodingTable {
 
-	return EncodingTable{
+	return table.EncodingTable{
 		' ': "11",
 		't': "1001",
 		'n': "10000",
