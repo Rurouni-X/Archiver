@@ -5,7 +5,7 @@ import (
 )
 
 type Generator interface {
-	newTable(string) EncodingTable
+	NewTable(string) EncodingTable
 }
 
 type EncodingTable map[rune]string
@@ -23,6 +23,11 @@ func (et EncodingTable) decodingTree() decodingTree {
 		res.add(code, ch)
 	}
 	return res
+}
+
+func (et EncodingTable) Decode(str string) string {
+	dt := et.decodingTree()
+	return dt.Decode(str)
 }
 
 func (dt *decodingTree) add(code string, value rune) {

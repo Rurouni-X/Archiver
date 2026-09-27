@@ -1,4 +1,4 @@
-package shannonfano
+package shannon_fano
 
 import (
 	"reflect"

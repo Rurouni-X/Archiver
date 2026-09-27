@@ -2,49 +2,79 @@ package vlc
 
 import (
 	"Archiver/pkg/compression/vlc/table"
+	"bytes"
+	"encoding/binary"
+	"encoding/gob"
+	"log"
 	"strings"
 	"unicode"
 	"unicode/utf8"
 )
 
 type EncoderDecoder struct {
+	tblGenerator table.Generator
 }
 
-func New() EncoderDecoder {
-	return EncoderDecoder{}
+func New(tblGenerator table.Generator) EncoderDecoder {
+	return EncoderDecoder{tblGenerator: tblGenerator}
 }
 
-func (_ EncoderDecoder) Encode(str string) []byte {
-
-	str = prepareText(str)
-	binStr := encodeBin(str)
-	chunks := splitByChunks(binStr, ChunkSize)
-
-	return chunks.Bytes()
+func (ed EncoderDecoder) Encode(str string) []byte {
+	table := ed.tblGenerator.NewTable(str)
+	encoded := encodeBin(str, table)
+	return buildEncodedFile(table, encoded)
 }
 
-func (_ EncoderDecoder) Decode(encodedData []byte) string {
-
-	result := NewBinChunks(encodedData).Join()
-	dTree := getEncodingTable().decodingTree()
-
-	return exportText(dTree.Decode(result))
+func (ed EncoderDecoder) Decode(encodedData []byte) string {
+	tbl, data := parseFile(encodedData)
+	return tbl.Decode(data)
 }
 
-func prepareText(str string) string {
+func parseFile(data []byte) (table.EncodingTable, string) {
+	tableSizeBinary, data := data[:4], data[4:]
+	dataSizeBinary, data := data[:4], data[4:]
 
-	var buff strings.Builder
+	tableSize := binary.BigEndian.Uint32(tableSizeBinary)
+	dataSize := binary.BigEndian.Uint32(dataSizeBinary)
+	tblBinary, data := data[:tableSize], data[tableSize:]
+	tbl := decodeTable(tblBinary)
+	body := NewBinChunks(data).Join()
 
-	for _, ch := range str {
+	return tbl, body[:dataSize]
+}
 
-		if unicode.IsUpper(ch) {
-			buff.WriteRune('!')
-			buff.WriteRune(unicode.ToLower(ch))
-		} else {
-			buff.WriteRune(ch)
-		}
+func buildEncodedFile(table table.EncodingTable, data string) []byte {
+	encodedTable := encodeTable(table)
+	var buf bytes.Buffer
+	buf.Write(encodeInt(len(encodedTable)))
+	buf.Write(encodeInt(len(data)))
+	buf.Write(encodedTable)
+	buf.Write(splitByChunks(data, ChunkSize).Bytes())
+
+	return buf.Bytes()
+}
+
+func encodeInt(num int) []byte {
+	res := make([]byte, 4)
+	binary.BigEndian.PutUint32(res, uint32(num))
+	return res
+}
+
+func encodeTable(table table.EncodingTable) []byte {
+	var tablesBuf bytes.Buffer
+	if err := gob.NewEncoder(&tablesBuf).Encode(table); err != nil {
+		log.Fatal("can't serialization table: ", err)
 	}
-	return buff.String()
+	return tablesBuf.Bytes()
+}
+
+func decodeTable(tblBinary []byte) table.EncodingTable {
+	var tbl table.EncodingTable
+	r := bytes.NewReader(tblBinary)
+	if err := gob.NewDecoder(r).Decode(&tbl); err != nil {
+		log.Fatal("can't decode table", err)
+	} 
+	return tbl
 }
 
 func exportText(str string) string {
@@ -71,58 +101,23 @@ func exportText(str string) string {
 	return buff.String()
 }
 
-func encodeBin(str string) string {
+func encodeBin(str string, table table.EncodingTable) string {
 
 	var buff strings.Builder
 
 	for _, ch := range str {
-		buff.WriteString(bin(ch))
+		buff.WriteString(bin(ch, table))
 	}
 
 	return buff.String()
 }
-func bin(ch rune) string {
-	table := getEncodingTable()
-
+func bin(ch rune, table table.EncodingTable) string {
 	res, ok := table[ch]
 	if !ok {
 		panic("unknown character: " + string(ch))
 	}
 
 	return res
-}
-func getEncodingTable() table.EncodingTable {
-
-	return table.EncodingTable{
-		' ': "11",
-		't': "1001",
-		'n': "10000",
-		's': "0101",
-		'r': "01000",
-		'd': "00101",
-		'!': "001000",
-		'c': "000101",
-		'm': "000011",
-		'g': "0000100",
-		'b': "0000010",
-		'v': "00000001",
-		'k': "0000000001",
-		'q': "000000000001",
-		'e': "101",
-		'o': "10001",
-		'a': "011",
-		'i': "01001",
-		'h': "0011",
-		'l': "001001",
-		'u': "00011",
-		'f': "000100",
-		'p': "0000101",
-		'w': "0000011",
-		'y': "0000001",
-		'j': "000000001",
-		'x': "00000000001",
-		'z': "000000000000",
-	}
 }
 
 func splitByChunks(binStr string, chunkSize int) BinaryChunks {

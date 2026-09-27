@@ -1,4 +1,4 @@
-package shannonfano
+package shannon_fano
 
 import (
 	"Archiver/pkg/compression/vlc/table"
@@ -22,7 +22,7 @@ func NewGenerator() Generator {
 	return Generator{}
 }
 
-func (g Generator) Newtable(text string) table.EncodingTable {
+func (g Generator) NewTable(text string) table.EncodingTable {
 	return build(newCharStart(text)).Export()
 }
 
