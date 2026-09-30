@@ -33,7 +33,7 @@
 
 ```bash
 # Клонируйте репозиторий
-git clone <ваш-репозиторий>
+git clone <git@github.com:Rurouni-X/Archiver.git>
 cd Archiver
 
 # Скачайте зависимости
